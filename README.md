@@ -11,3 +11,6 @@ A fancy maid for fancy communities
 
 Invite Pollux >> http://goo.gl/qkGqqU
 Join the SUPPORT Server >> https://discord.gg/ay48h7Q
+
+
+This code is for reference-only and most of it is not up-to-date. This is not functional and we do not offer any support for self-hosting.
