@@ -77,14 +77,14 @@ var init = function (evento, logtype, Server, DB, extras, alt, arg, nise) {
 
       function createLog(icon, title, flavor, event, footer, color, image, full) {
 
-        const ember = new Discord.RichEmbed;
+        const ember = new Discord.MessageEmbed;
 
         if (title) ember.setTitle(title);
         if (flavor) ember.setDescription(icon + " " + flavor);
         if (event && footer) ember.setFooter(event, footer);
         if (event && !footer) ember.setFooter(event);
         if (image) ember.setThumbnail(image);
-
+        
         if (full && full.includes('http://')) ember.setImage(full ||neoma|| arg.user.imgn || "");
         ember.setColor((color || "#4c63e2"));
         var ts = new Date
@@ -280,11 +280,11 @@ var init = function (evento, logtype, Server, DB, extras, alt, arg, nise) {
           .replace("%1%", namely),
           a.event, a.footer, a.color, a.image, igg)
 
-
-
-
-
-
+        
+        
+        
+        
+        
         if (alt) {
           if (alt.constructor == Array) {
 
@@ -315,7 +315,7 @@ var init = function (evento, logtype, Server, DB, extras, alt, arg, nise) {
         chanpoint.send({
           embed: emb
         }).catch(e => {
-         // console.log(e)
+         // console.error(e)
         })
 
       }

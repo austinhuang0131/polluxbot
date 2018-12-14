@@ -7,11 +7,13 @@ const mm = locale.getT();
 const userDB=gear.userDB;
 const DB=gear.serverDB;
 
-const init= async function run(msg) {
+const init= async function run(msg,LV) {
 
 const canvas = new Canvas.createCanvas(400, 225);
 const ctx = canvas.getContext('2d');
 
+  if( !msg.channel.permissionsFor(msg.guild.me).has(["SEND_MESSAGES","ATTACH_FILES"])) return;
+  
 let gif = new GifEncoder(400, 225);
   gif.writeHeader();
   gif.setRepeat(-1);
@@ -36,11 +38,11 @@ let gif = new GifEncoder(400, 225);
   let dir='./resources/imgres/gif/lvup/'
 
   let Target = msg.mentions.users.first()||msg.author;
-  let ID=await userDB.findOne({id:Target.id});
-  let tag = await gear.tag(ctx,ID.modules.level,'900 30px Sans','#2b2b2b');
+  let ID=await userDB.findOne({id:Target.id},{"modules.level":1});
+  let tag = await gear.tag(ctx,LV||ID.modules.level,'900 30px Sans','#2b2b2b');
   let tagV = await gear.tag(ctx,Target.tag,'18px Whitney','#818181');
-  let avit = Target.avatarURL || Target.defaultAvatarURL;
-  avit= avit.replace('gif','png');
+  let avit =  Target.displayAvatarURL({format:'png'});
+  avit= avit.replace(/(gif|webp)/g,'png');
   let y = await gear.getCanvas(avit);
   let widVE
   let s=1

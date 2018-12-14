@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const gear = require("../../gearbox.js");
-const cmd = 'fausto';
+const cmd = 'faustão';
 const locale = require('../../../utils/multilang_b');
 const mm = locale.getT();
 const init = function (message,userDB,DB) {
@@ -35,7 +35,7 @@ if (message.content.split(/ +/)[1]==helpkey || message.content.split(/ +/)[1]=="
             "CHURRASQUEIRA DE CONTROLE REMOTO!",
         ]
 let f= "https://abrilvejasp.files.wordpress.com/2016/12/faustao-popp.jpg?quality=70&strip=info&w=600"
-message.channel.createWebhook('Faustão',"http://static2.blastingnews.com/media/photogallery/2015/4/21/660x290/b_290x290/globo-fara-programa-para-revelar-novo-faustao_309513.jpg")
+message.channel.createWebhook('Faustão',{avatar:"http://static2.blastingnews.com/media/photogallery/2015/4/21/660x290/b_290x290/globo-fara-programa-para-revelar-novo-faustao_309513.jpg"})
  .then(async w => {
     await w.edit("Faustão",f)
     w.send(fausto[gear.randomize(0,11)])
@@ -43,7 +43,7 @@ message.channel.createWebhook('Faustão',"http://static2.blastingnews.com/media/
 })
  .catch(e=>{
 
-    let emb = new gear.Discord.RichEmbed
+    let emb = new gear.RichEmbed
     emb.setDescription(fausto[gear.randomize(0,11)]);
     emb.setAuthor("Faustão");
     emb.setThumbnail(f);
@@ -58,7 +58,7 @@ message.channel.createWebhook('Faustão',"http://static2.blastingnews.com/media/
  module.exports = {
     pub:true,
     cmd: cmd,
-    perms: 3,
+    perms: 3, 
     init: init,
     cat: 'fun'
 };

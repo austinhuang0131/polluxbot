@@ -1,227 +1,244 @@
+const gear = require("../gearbox.js");
+const paths = require("../paths.json");
 
-var gear = require("../gearbox.js");
-var paths = require("../paths.json");
-var locale = require('../../utils/multilang_b');
+const channelDB = gear.channelDB,
+      userDB    = gear.userDB,
+      DB        = gear.serverDB;
+
+
+
+function eventChecks(svDATA){
+
+  if (!svDATA.event) return 1;
+  if (!svDATA.event.enabled) return 1;
+  if (!svDATA.event.channel) return 1;
+  if (!svDATA.event.iterations) return 1;
+
+  let I = Math.round(svDATA.event.iterations)
+
+  return I;
+
+}
+
 
 
 module.exports = {
-    runb: function dropGoodies(event, DB, userDB) {
-
-        var mm = locale.getT();
-
-
-if(event.content!="kéo")return;
-
-
-        var hook = gear.hook
-        var message = event
-        var Server = event.guild
-
-
-        var CHN = event.channel
-        if (Server.dDATA.channels[CHN.id].modules.DROPS == false) return;
-        var GLD = event.guild
-        var LANG = event.lang;
-        let GOODMOJI = gear.emoji("rubine")
-        let GOOD = 'Rubine'
-        if (Server.dDATA.modules) {
-            GOODMOJI = Server.dDATA.modules.GOODMOJI
-        }
-        if (Server.dDATA.modules) {
-            GOOD = Server.dDATA.modules.GOODNAME
-        }
-        if (typeof CHN.DROPSLY != 'number') {
-            CHN.DROPSLY = 0
-        }
-        var droprate = gear.randomize(1, 10000)
-        if (GLD.name === "Discord Bots") return;
-        console.log(droprate)
-        if (droprate > 1234 ||
-            droprate == 2525 ||
-            droprate == 8714 ||
-            droprate == 8586 ||
-            droprate == 3223 ||
-            droprate == 4321) {
-            console.log('DROP')
-            var pack;
-            var prefie = Server.dDATA.modules.PREFIX || "+"
-
-            CHN.send(mm('$.goodDrop', {
-                lngs: LANG,
-                good: GOOD,
-                emoji: GOODMOJI,
-                prefix: prefie
-            }).replace(/\&lt;/g, "<").replace(/\&gt;/g, ">"), {
-                files: [paths.BUILD + 'rubine.png']
-            }).catch(e => {
-                CHN.send(mm('$.goodDrop', {
-                    lngs: LANG,
-                    good: GOOD,
-                    emoji: GOODMOJI,
-                    prefix: prefie
-                }).replace(/\&lt;/g, "<").replace(/\&gt;/g, ">")).then(m => processDrop(m)).catch(e=>console.log("--unauthorized drop--"))
-
-            }).then(m => processDrop(m))
-        }
+  lootbox: async function loot(event) {
 
 
 
-        if (droprate === 777) {
-
-            event.channel.send(mm('$.rareDrop', {
-                lngs: LANG,
-                good: GOOD,
-                emoji: GOODMOJI,
-                prefix: Server.dDATA.modules.PREFIX
-            }).replace(/\&lt;/g, "<").replace(/\&gt;/g, ">"), {
-                files: [paths.BUILD + 'rubinepot.png']
-            }).then(m => processDropRare(m)).catch(e => {
-                event.channel.send(mm('$.rareDrop', {
-                    lngs: LANG,
-                    good: GOOD,
-                    emoji: GOODMOJI,
-                    prefix: Server.dDATA.modules.PREFIX
-                }).replace(/\&lt;/g, "<").replace(/\&gt;/g, ">")).then(m => processDropRare(m)).catch(e => gear.hook.send("**DROP REFUSES** \n"+e.error))
-            })
-        }
+const locale = require('../../utils/multilang_b');
+const mm = locale.getT();
+    let date = new Date();
+     if (event.content !== "--forcedroploot" && event.author.id!=="88120564400553984") {
+     if (date.getSeconds() === 0)return;
+     if (date.getSeconds() % 5 === 0)return;
 
 
+     };
 
-        async function processDropRare(r) {
-            try {
-                if (isNaN(CHN.DROPSLY)) {
-                    CHN.DROPSLY = 500
-                } else {
-                    CHN.DROPSLY += 500
+    if (event.guild.lootie) return console.log("lootie is ON");
+    event.guild.lootie = false;
+    const msg = event
 
-                }
-                console.log("------------=========== ::: NATURAL RARE DROP ::: ===".bgGreen.yellow.bold)
+    const MSG = event.content;
+    const SVR = msg.guild;
+    const CHN = msg.channel;
+    const L = msg.lang
 
-                return new Promise(async resolve => {
+    let serverDATA= await gear.serverDB.findOne({id:SVR.id});
 
-                    var oldDropsly = CHN.DROPSLY
-                    const responses = await CHN.awaitMessages(msg2 =>
-                        msg2.author.id === message.author.id && (msg2.includes'pick', {
-                            maxMatches: 1
-                        }
-                    );
-                    if (responses.size === 0) {} else {
-                        if (oldDropsly > CHN.DROPSLY) {
-                            r.delete().catch(e=> {let a = (new Error); gear.errLog(e,__filename,a.stack.toString())});
-                            return resolve(true);
-                        }
-                        let Picker = responses.first().author
+    if ((await channelDB.findOne({id:CHN.id})).modules.DROPS == false) return;
 
-
-                        console.log("----------- SUCCESSFUL PICK by" + Picker.username)
-                        message.channel.send(mm('$.pick', {
-                            lngs: LANG,
-                            good: GOOD,
-                            user: Picker.username,
-                            count: CHN.DROPSLY,
-                            emoji: ""
-                        }) + " " + gear.emoji("rubine")).then(function (c) {
-                            message.delete().catch(e => {
-                                let v = "Couldnt Delete Message at 377"
-                                console.log(v);
-                                hook.send(v)
-                            });
-                            c.delete(500000).catch(e => {
-                                let v = "Couldnt Delete R at 382"
-                                console.log(v);
-                                hook.send(v)
-                            });
-                        }).catch(e => {
-                            let v = "Couldnt Send PickPot at 388"
-                            console.log(v);
-                            hook.send(v)
-                        });
-
-                        gear.paramIncrement(Picker, 'rubines', CHN.DROPSLY)
-                        gear.paramIncrement(Picker, 'earnings.drops', CHN.DROPSLY)
-                        CHN.DROPSLY = 0
-                        r.delete().catch(e => {
-                            let v = "Couldnt Delete R at 396"
-                            console.log(v);
-                            hook.send(v)
-                        });
-                        return resolve(true);
-
-
-                    }
-                })
-            } catch (e) {
-                let v = "Rubine Send Forbidden: " + r.guild.name + " C: " + r.channel.name
-                gear.hook.send(e.error);
-                hook.send(v)
-            }
-        }
-
-
-        async function processDrop(r) {
-
-            try {
-                if (isNaN(CHN.DROPSLY)) {
-                    CHN.DROPSLY = 10
-                } else {
-                    CHN.DROPSLY += 10
-                }
-                console.log("------------=========== ::: NATURAL DROP".bgGreen.white)
-
-                return new Promise(async resolve => {
-
-                    var oldDropsly = CHN.DROPSLY
-                    const responses = await CHN.awaitMessages(msg2 =>
-                        msg2.author.id === message.author.id && (msg2.content === message.prefix + 'pick'||msg2.content === DB.get(msg2.guild.id).modules.PREFIX + 'pick'), {
-                            maxMatches: 1
-                        }
-                    );
-
-                    if (responses.size === 0) {} else {
-                        if (oldDropsly > CHN.DROPSLY) {
-                            r.delete().catch(e => {
-                                let v = "Couldnt Delete R at 295"
-                                console.log(v);
-                                hook.send(v)
-                            });
-                            return resolve(true);
-                        }
-                        let Picker = responses.first().author
-
-                        console.log("----------- SUCCESSFUL PICK by" + Picker.username)
-                        message.channel.send(mm('$.pick', {
-                            lngs: LANG,
-                            good: GOOD,
-                            user: Picker.username,
-                            count: CHN.DROPSLY,
-                            emoji: ""
-                        }) + " " + gear.emoji("rubine")).then(function (c) {
-                            message.delete()
-                            c.delete(500000).catch(e=> {let a = (new Error); gear.errLog(e,__filename,a.stack.toString())})
-                        }).catch(e=> {let a = (new Error); gear.errLog(e,__filename,a.stack.toString())}).catch(e=> {let a = (new Error); gear.errLog(e,__filename,a.stack.toString())});
-
-                        gear.paramIncrement(Picker, 'rubines', CHN.DROPSLY)
-                        gear.paramIncrement(Picker, 'earnings.drops', CHN.DROPSLY)
-                        CHN.DROPSLY = 0
-
-                        r.delete().catch(e => {
-                            let v = "Couldnt Delete R at 322"
-                            console.log(v);
-                            hook.send(v)
-                        });
-                        return resolve(true);
-                    }
-                })
-            } catch (e) {
-                let v = "Rubine Send Forbidden: " + r.guild.name + " C: " + r.channel.name
-                gear.hook.send(e.error);
-                hook.send(v)
-            }
-        }
-
-
-
+    let prerf = (await DB.findOne({id:msg.guild.id})).modules.PREFIX || "+";
+    const P = {
+      lngs: msg.lang
+    }
+    const v = {
+      dropLoot: mm("loot.lootDrop." + (gear.randomize(1, 5)), P) + mm("loot.lootPick", P).replace(prerf, ""),
+      disputing: mm("loot.contesting", P),
+      oscarGoesTo: mm("loot.goesTo", P),
+      gratz: mm("loot.congrats", P),
+      morons: mm("loot.morons", P),
+      eventDrop: mm("loot.eventDrop", P),
+      suprareDrop: mm("loot.suprareDrop", P)+ mm("loot.lootPick", P),
+      rareDrop: mm("loot.rareDrop", P)+ mm("loot.lootPick", P),
+      ultraRareDrop: mm("loot.ultraRareDrop", P)+ mm("loot.lootPick", P)
     }
 
+    try{
+    await dropLoot(event, DB, userDB, MSG, SVR, CHN, L, v);
+       event.guild.lootie = false
+    }catch(e){
+      console.log(e)
+      event.guild.lootie = false
+    };
 
-}
+    event.guild.lootie = false
+    async function dropLoot(event) {
+      return new Promise(async resolve => {
+
+      let droprate = gear.randomize(1, 1000);
+
+
+      event.botUser.ivetal = event.botUser.ivetal || 0
+        event.botUser.ivetal++
+
+      if (event.content === "--forcedroploot" && event.author.id==="88120564400553984") droprate=777;
+
+    let iterate= eventChecks(serverDATA);
+
+      for (i=0;i<iterate;i++){
+        droprate = gear.randomize(1, 1000);
+        //let dropevent = gear.randomize(1, 5);
+        //if (dropevent >= 5)convertToEvent(i);
+      };
+
+    if (droprate === 777) {
+      try{        
+        event.botUser.channels.get('382413370579484694').send("Lootbox Drop at **"+event.guild.name+"** | #"+event.channel.name+` after ${event.botUser.ivetal} messages`);
+      }catch(e){}
+      event.botUser.ivetal = 0;
+
+
+      let options = [
+        [v.ultraRareDrop,"lootbox_UR_O"] , //10
+        [v.suprareDrop,"lootbox_SR_O"],    //98
+        [v.rareDrop,"lootbox_R_O"],        //765
+        [v.dropLoot,"lootbox_U_O"]         //4321
+        [v.dropLoot,"lootbox_C_O"]         //4321
+      ];
+      let cax;
+      let rand = gear.randomize(0, 20)
+      switch (rand) {
+        case 20:
+          cax = options[0]
+          break;
+        case 19:
+        case 18:
+          cax = options[1]
+          break;
+        case 17:
+        case 16:
+        case 15:
+          cax = options[2]
+          break;
+        case 14:
+        case 13:
+        case 11:
+        case 10:
+          cax = options[3]
+          break;
+        default:
+          cax = options[4]
+          break;
+      };
+      let itemPic = "chest.png"
+
+      
+      
+      function convertToEvent(i){
+        try{
+          
+          //cax[1] = cax[1].replace("O", "event_2")
+          //if(i&&i==0){cax[0] += "\n" + v.eventDrop}
+          //itemPic = "xmas_chest.png"
+        }catch(e){}
+        }
+  
+          if (!cax)cax= [v.dropLoot,"lootbox_C_O"] ;
+      
+          CHN.send(cax[0], {
+              files: [paths.BUILD + itemPic]
+            })
+            .then(dropMsg => event.channel.send(v.disputing)
+              .then(dispMsg => processDropChest(dropMsg, dispMsg, cax[1])))
+            .catch(err => {
+              CHN.send(cax[0])
+                .then(dropMsg => event.channel.send(v.disputing)
+                  .then(dispMsg => processDropChest(dropMsg, dispMsg, cax[1])))
+                .catch(err => console.log(err))
+            })
+          }
+        })
+      }
+    async function processDropChest(drop, disp,it) {
+      try {
+        if (!CHN.loot) {
+          CHN.loot = true
+        }
+        return new Promise(async resolve => {
+          let oldDropsly = CHN.DROPSLY;
+          let pickers = new gear.Discord.Collection;
+          let responses = await CHN.awaitMessages(async msg2 => {
+
+            if (!pickers.has(msg2.author.id) && (msg2.content.toLowerCase().includes('pick'))) {
+              pickers.set(msg2.author.id, msg2);
+              //console.log(pickers.has(msg2.author.id))
+              await disp.edit(disp.content + "\n" + msg2.author.username).then(neue => {
+                disp.content = neue.content;
+                return true;
+              })
+            } else {
+              return false
+            }
+          }, {time: 30000});
+
+          if (pickers.size === 0) {
+              drop.delete()
+              disp.delete()
+              CHN.send(v.morons)
+            event.guild.lootie = false
+            return resolve(false);
+          } else {
+            if (oldDropsly > CHN.DROPSLY) {
+              drop.delete().catch(e => {});
+              event.guild.lootie = false
+              return resolve(true);
+            };
+            let drama = [],
+                ments = [],
+                ids   = [];
+              pickers.forEach(ms => {
+              drama.push(ms.guild.member(ms.author).displayName)
+              ments.push(ms.author).toString()
+              ids.push(ms.author.id)
+            })
+
+            let rnd = gear.randomize(0, ments.length - 1);
+
+            //console.log("----------- PICK by" + drama[rnd])
+            await pickers.deleteAll();
+            await drop.delete().catch(e => {});
+            await disp.delete().catch(e => {});
+
+            CHN.send(v.oscarGoesTo).then(goes => {
+              CHN.send(drama).then(async dra => {
+                setTimeout(async fn => {
+                  drama[rnd] = ments[rnd]
+                  await dra.edit(drama).then(async fin => {
+                    //console.log(ids[rnd],it,"A A A")
+                     userDB.set(ids[rnd],{$push:{'modules.inventory':it}}).then(ok=>{
+
+                    setTimeout(async fn => {
+                      event.guild.lootie = false
+                      fin.delete().catch(e => {event.guild.lootie = false})
+                    }, 5000);
+                     });
+                  });
+                }, 5000)
+              });
+              CHN.loot = false;
+              event.guild.lootie = false;
+              return resolve(true);
+            });
+          };
+        });
+      } catch (e) {
+        let v = "Rubine Send Forbidden: " + drop.guild.name + " C: " + drop.channel.name
+        gear.hook.send(e.error);
+        hook.send(v)
+      }
+    }
+  }
+};

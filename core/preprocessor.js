@@ -6,10 +6,17 @@ module.exports = {
     determine: function determine(msg) {
         let query = msg.content.substr(msg.prefix.length).split(' ')[0];
 
-        let imgreactions = JSON.parse(fs.readFileSync("./core/imgreactions.json", 'utf8'));
+        let imgreactions = require("./imgreactions.js").out;
+
         if(imgreactions[query]){
+          let rea
+          if(imgreactions[query].constructor == Array){
+            rea = imgreactions[query][gear.randomize(0,imgreactions[query].length-1)];
+          }else{
+            rea = imgreactions[query]
+          }
             return {
-                reaction: imgreactions[query],
+                reaction: rea,
                 path: null,
                 module: "img",
                 cat: "instant"
@@ -61,7 +68,7 @@ module.exports = {
 
         try {
             let commandFile = require(DTMN.path);
-          console.log(DB.chanData.modules.DISABLED.includes(commandFile.cmd))
+          //console.log(DB.chanData.modules.DISABLED.includes(commandFile.cmd))
             switch (true) {
               case !msg.channel.nsfw && commandFile.cat.toLowerCase() == "nsfw" :
                     return "NONSFW";
@@ -84,30 +91,58 @@ module.exports = {
         }
     },
     run: async function run(file, message, final_payload) {
-
         try {
 
             delete require.cache[require.resolve(file)];
             let command = require(file)
 
             try{
-
-            let exp = command.exp || 5;
-            await gear.userDB.set(message.author.id,{$inc:{'modules.exp':exp}});
+            let rand=gear.randomize(0,6)
+            let exp = (command.exp || 4)-rand;
+            gear.userDB.set(message.author.id,{$inc:{'modules.exp':exp}});
             }catch(e){
-              console.log(e)
+              console.error(e)
             }
-
+          
+            require('./minibuster.js').up(message,command.positive||2);
+          
             let cooldown = command.cool || 2000;
                if(message.author.id==cfg.owner){
                  cooldown=0
+               }else if(message.author.id=="200044537270370313"){
+                 cooldown=8000;
+                  await gear.userDB.set(message.author.id,{$inc:{'modules.exp':-1}});
                }
             let now = Date.now();
             if (message.author.cd_timer && (now - message.author.cd_timer)<cooldown){
-              return message.reply(":hourglass_flowing_sand: Cooldown: `"+Math.abs((message.author.cd_timer+cooldown)-now )+"ms`")
+              return message.reply(":hourglass_flowing_sand: Cooldown: `"+Math.abs((message.author.cd_timer+cooldown)-now )+"ms`").then(m=>m.delete(Math.abs((message.author.cd_timer+cooldown)-now )))
             }
 
             message.author.cd_timer = Date.now();
+            Promise.all([
+            gear.globalDB.set({
+              $inc: {
+                    ['data.statistics.commandUsage.CMD.' + command.cmd]: 1,
+                    ['data.statistics.commandUsage.CAT.' + command.cat.replace('$','cash')]: 1
+              }
+            }),
+            gear.userDB.set(message.author.id,{
+              $inc: {
+                    ['modules.statistics.commandUsage.CMD.' + command.cmd]: 1,
+                    ['modules.statistics.commandUsage.TOTAL']: 1,
+                    ['modules.statistics.commandUsage.CAT.'+command.cat.replace('$','cash')]: 1
+              }
+            }),
+            gear.serverDB.set(message.guild.id,{
+              $inc: {
+                    ['modules.statistics.commandUsage.CMD.' + command.cmd]: 1,
+                    ['modules.statistics.commandUsage.TOTAL']: 1,
+                    ['modules.statistics.commandUsage.CAT.'+command.cat.replace('$','cash')]: 1
+              }
+            })
+            ]
+            )
+          
             /*
             let cmdtrak = (await userDB.findOne({id:message.author.id})).modules.statistics.commandsUsed[command.cmd]
             if(cmdtrak == undefined)(await userDB.findOne({id:message.author.id})).modules.statistics.commandsUsed[command.cmd]=0;
@@ -118,24 +153,52 @@ module.exports = {
             (await DB.findOne({id:message.guild.id})).modules.statistics.commandsUsed[command.cmd]++
             */
 
-
+            
 
             let commandname = message.content.split(/ +/)[0]
 
             message.target={};
+            message.args=message.content.split(/ +/).slice(1);
             message.botUser.dDATA=final_payload.Database_bot;
             message.author.dDATA=final_payload.userData;
             message.target.dDATA=final_payload.targData;
             message.guild.dDATA=final_payload.servData;
             message.channel.dDATA=final_payload.chanData;
+          try{
+            
+            if (command.cat){
+              let perms = command.botperms
+              
+              delete require.cache[require.resolve('./catcheck.js')];      
+              let permchk = require('./catcheck.js').run(command.cat,message,perms)
+              if (permchk!=='ok') return console.log(permchk);              
+            }
+            
+            
+            await command.init(message);
 
-            command.init(message, gear.userDB, gear.DB);
+              
+               
+          }catch(e){
+            console.error(e)
+          }
 
-            console.log(" \x1b[45;1;37m"+"  --== " + commandname.toUpperCase() + " ==--   " + " || "+message.guild.name+" || "+message.author.tag+"\x1b[0m")
-            console.log(" \x1b[37;1;91m |"+message.content+"| \x1b[0m")
+
+          if(!message.author.id==process.env.WATCHCMD || process.env.WATCHCMD == "all"){
+            console.log("SHARD "+(process.env.SHARD).black.bgYellow+("  --== " + commandname.toUpperCase() + " ==--   " + " || "+message.guild.name+" || "+message.author.tag+"  "+message.author.id).bgMagenta)
+            console.log(" \x1b[37;1;91m |"+message.content+"| \x1b[0m "+(new Date()))
+            console.log(message.guild.id + " S || C "+message.channel.id )
+            }
         } catch (e) {
-            console.log(e);
+            console.error(e);
         }
+        
+  
+                message= null;
+                final_payload= null;
+                command= null;
+       
+        
     }
 };
 console.log("Preprocessor OK!")

@@ -11,7 +11,7 @@ const cmd = 'rotation';
 
 const init = async function (message, userDB, DB) {
 
-
+  
 
     const LANG = message.lang;
 
@@ -32,7 +32,7 @@ const init = async function (message, userDB, DB) {
 
     const args = message.content.split(/\s+/).slice(1).join(" ").toLowerCase()
     let rotation = []
-    let emb = new gear.Discord.RichEmbed();
+    let emb = new gear.RichEmbed();
 
     if (args === "league of legends" || args === "league" || args === "lol") lol();
     else if (args === "heroes of the storm" || args === "hots" || args === "hos" || args === "heroes") hots();
@@ -125,29 +125,31 @@ ${gear.emoji(rotation[0][9].replace(/\./g,"").replace(" ","").toLowerCase())}${r
     }
 
    async function lol() {
+     
+request("https://na1.api.riotgames.com/lol/platform/v3/champions?freeToPlay=true&api_key=RGAPI-c7ff2b56-76db-442c-b112-4dd70b507b56",(e,r)=>{
 
+   
+   let body = JSON.parse(r.body).champions.map(x=>x.id)
+   
+ 
 
-        request('http://leagueoflegends.wikia.com/wiki/Free_champion_rotation', function (error, response, html) {
-
-            if (!error && response.statusCode == 200) {
-                var $ = cheerio.load(html);
                 let obj = require('../../../resources/lists/league.json').data;
                 let allchamps = Object.keys(obj).map(function(key) {
                   return obj[key];
-                });
-                $('.champion-icon').each(function (i, element) {
-                    if (i < 14) {
-                        let champ = element.attribs["data-champion"];
-                        let c =allchamps.find(x=>x.name == champ)
+                }).filter(key=>body.includes(key.id));
+  
+  
+              allchamps.forEach(champ=>{
+
+                        let c = champ
                         let role = c? c.tags? c.tags[0]:"Specialist":"Specialist";
-                        rotation.push([gear.emoji(role.toLowerCase()),champ]);
-                    }
+                        rotation.push([gear.emoji(role.toLowerCase()),champ.name]);
+                    
                 });
                 console.log(rotation)
-
-            }
-
-            emb = new gear.Discord.RichEmbed();
+     
+            
+            emb = new gear.RichEmbed();
             emb.setColor('#064955')
 
             emb.setFooter(`© 2006 - ${(new Date).getYear()+1900} | Riot Games, Inc.`, "https://upload.wikimedia.org/wikipedia/en/4/47/Riot_Games_logo.png")

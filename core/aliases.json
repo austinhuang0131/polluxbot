@@ -1,7 +1,21 @@
 {
+    "sanctify": "santificar",
     "aerowaifu": "airwaifu"
     ,"pong":"ping"
     ,"ピング":"ping"
+    ,"monologoakira":"monologomaçã"
+    ,"monologo":"monologomaçã"
+    ,"ev$":"evcontrib"
+    ,"evcon":"evcontrib"
+    ,"evinfo":"eventinfo"
+    ,"evboard":"eventinfo"
+ 
+  
+  
+    ,"gtf":"guessflag"
+    ,"gflag":"guessflag"
+    ,"guesstheflag":"guessflag"
+  
 
     ,"credits":"cash"
     ,"rubines":"cash"
@@ -45,7 +59,7 @@
     ,"role-add":"roleadd"
     ,"add-cargo":"roleadd"
     ,"addcargo":"roleadd"
-    ,"addrole":"roleadd"
+    ,"roles.add":"roleadd"
     ,"ar":"roleadd"
 
     ,"r-":"rolerem"
@@ -56,7 +70,7 @@
     ,"remover-cargo":"rolerem"
     ,"addcargo":"rolerem"
     ,"remcargo":"rolerem"
-    ,"addrole":"rolerem"
+    ,"roles.add":"rolerem"
     ,"remrole":"rolerem"
     ,"rr":"rolerem"
 
@@ -74,13 +88,13 @@
     ,"pl":"playlist"
 
 
-    ,"lewd":"rule34"
-    ,"sacanage":"rule34"
-    ,"putaria":"rule34"
-    ,"hentai":"rule34"
+    ,"lewd":"lewd"
+    ,"sacanage":"lewd"
+    ,"putaria":"lewd"
+    ,"hentai":"lewd"
     ,"あへがお":"ahegao"
-    ,"へんたい":"rule34"
-    ,"変体":"rule34"
+    ,"へんたい":"lewd"
+    ,"変体":"lewd"
 
 
     ,"safebooru":"safe"
@@ -280,6 +294,10 @@
   ,"câmbio":"exchange"
   ,"exg":"exchange"
 
+  ,"yt":"youtube"
+  ,"video":"youtube"
+  ,"teucano":"youtube"
+
   ,"trit":"trickortreat"
   ,"docesoutravessuras":"trickortreat"
 
@@ -291,4 +309,12 @@
   ,"doce":"candy"
   ,"$cy":"candy"
 
+  ,"wtt":"weather"
+  ,"tempo":"weather"
+
+  ,"trt":"tarot"
+  ,"tarô":"tarot"
+  
+  ,"ppclk":"profilelink"
+  ,"pfl":"profilelink"
 }

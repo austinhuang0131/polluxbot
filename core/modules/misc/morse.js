@@ -8,12 +8,13 @@ const fs = require("fs");
 const cmd = 'morse';
 
 const init = async function (message) {
-
+try{
+  
     let P = {lngs:message.lang}
     let string = message.content.split(/ +/).slice(1).join(' ').toUpperCase()+" ";
     let voiceChannel = message.member.voiceChannel;
     let mo = morset.encode(string)
-    let exportFile
+    let exportFile 
     let connection;
     if (!voiceChannel) {
       message.reply(mm('CMD.enterVoiceBetterExperience',P));
@@ -23,7 +24,7 @@ const init = async function (message) {
       connection=  await voiceChannel.join()
     }
 
-const embed = new gear.Discord.RichEmbed
+const embed = new gear.RichEmbed
 embed.setAuthor("We get signal!");
 embed.setFooter("Radio Operator | Zero Wing","http://i.imgur.com/tda07NK.png")
 embed.setColor("#5745a3")
@@ -33,16 +34,19 @@ embed.setDescription("*\"WHAT?\"*\n```"+output+"```\n"+gear.emoji("wifirouter")+
 message.channel.send({embed}).catch(e=>message.channel.send(output).catch(e=>message.channel.send("Morse Code Too Long")))
 message.delete()
 
-if(!connection)return;
+if(!connection)return;  
 const dispatcher = connection.playStream(exportFile);
 dispatcher.on('end', () => {
     voiceChannel.leave();
     fs.unlink(exportFile,x=>x);
 });
 
+}catch(e){
+  console.error(e)
+}
 }
  module.exports = {
-    pub:true,
+    pub:false,
     cmd: cmd,
     perms: 3,
     init: init,

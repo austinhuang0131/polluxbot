@@ -10,7 +10,7 @@ var cmd = 'dogla';
 var LANG = ""
 var init = function (message, userDB, DB) {
     var Server = message.guild;
-    var Channel = message.channel;
+    var Channel = message.channel; 
     var Author = message.author;
     if (Author.bot) return;
     var Member = Server.member(Author);
@@ -107,7 +107,7 @@ var init = function (message, userDB, DB) {
     }else {
 
         if (txt =="") return message.reply("ERROR");
-            message.delete(5000).catch(e=> {let a = (new Error); gear.errLog(e,__filename,a.stack.toString())})
+            message.delete({timeout:5000}).catch(e=> {let a = (new Error); gear.errLog(e,__filename,a.stack.toString())})
 
         //   cart.print(eval(skinfo.persotextF), skinfo.persotextX  , skinfo.persotextY , `${texp}`, skinfo.persotextWmax);
 

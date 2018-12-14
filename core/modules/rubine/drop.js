@@ -7,7 +7,7 @@ const mm = locale.getT();
 const cmd = 'drop';
 
 const init = async function (message, userDB, DB) {
-
+return;
   const Server = message.guild;
   const Channel = message.channel;
   const Author = message.author;
@@ -19,7 +19,7 @@ const init = async function (message, userDB, DB) {
 
   let P={lngs:message.lang}
   if(gear.autoHelper([mm("helpkey",P)],{cmd,message,opt:this.cat}))return;
-
+  
   let userData = Author.dDATA.modules
 
   var emojya = gear.emoji("rubine")
@@ -33,8 +33,8 @@ const init = async function (message, userDB, DB) {
       await eko.pay(dropAmy, Author, {
         type: 'drops'
       });
-      await gear.paramIncrement(Author, 'rubines', -Math.abs(dropAmy));
-      await gear.paramIncrement(msg.botUser.user, 'rubines', Math.abs(dropAmy));
+     // await gear.paramIncrement(Author, 'rubines', -Math.abs(dropAmy));
+     // await gear.paramIncrement(msg.botUser.user, 'rubines', Math.abs(dropAmy));
 
     message.channel.send(mm('$.userDrop', {
       lngs: LANG,
@@ -45,16 +45,16 @@ const init = async function (message, userDB, DB) {
       prefix: message.prefix
     }).replace(/\&lt;/g, "<").replace(/\&gt;/g, ">"), {
       files: [paths.BUILD + 'rubine.png']
-    }).then(function (r) {
+    }).then(async function (r) {
 
       if (isNaN(Channel.DROPSLY)) {
         Channel.DROPSLY = dropAmy
       } else {
         Channel.DROPSLY += dropAmy
       }
-      message.delete(1000);
-
-
+      message.delete({timeout:1000});
+      
+      
         let oldDropsly = Channel.DROPSLY;
         let responses = await Channel.awaitMessages(msg2 =>
           msg2.content === message.prefix + 'pick' ||
@@ -62,12 +62,12 @@ const init = async function (message, userDB, DB) {
             maxMatches: 1
           }
         ).catch("DROP.JS 67 -- ERROR");
-
+      
         if (responses.size === 0) {} else {
           if (oldDropsly > Channel.DROPSLY) {
             return resolve(true);
           }
-
+          
           let Picker = responses.first().author
           console.log("----------- SUCCESSFUL PICK by" + Picker.username)
           message.channel.send(mm('$.pick', {
@@ -76,12 +76,12 @@ const init = async function (message, userDB, DB) {
             user: Picker.username,
             count: Channel.DROPSLY,
             emoji: ""
-          }) + " " + emojya).then(function (c) {
-            c.delete(500000).catch(e => {
+          }) + " " + emojya).then(async  function (c) {
+            c.delete({timeout:500000}).catch(e => {
               let a = (new Error);
               gear.errLog(e, __filename, a.stack.toString())
             })
-            r.delete(0).catch(e => {
+            r.delete({timeout:0}).catch(e => {
               let a = (new Error);
               gear.errLog(e, __filename, a.stack.toString())
             })
@@ -90,7 +90,7 @@ const init = async function (message, userDB, DB) {
             gear.errLog(e, __filename, a.stack.toString())
           });
 
-          await gear.paramIncrement(Picker, 'rubines', Math.abs(Channel.DROPSLY));
+          //await gear.paramIncrement(Picker, 'rubines', Math.abs(Channel.DROPSLY));
           await eko.receive(Channel.DROPSLY, Picker, {
             type: 'drops'
           });
@@ -101,10 +101,9 @@ const init = async function (message, userDB, DB) {
         return resolve(true);
 
     }).catch(e => {
-      let a = (new Error);
-      gear.errLog(e, __filename, a.stack.toString())
+    console.error(e)
     })
-
+    
   } else {
     message.reply(mm('$.cantDrop', {
       lngs: LANG,
@@ -117,7 +116,7 @@ const init = async function (message, userDB, DB) {
 }
 
 module.exports = {
-  pub: true,
+  pub: false,
   cmd: cmd,
   perms: 3,
   init: init,

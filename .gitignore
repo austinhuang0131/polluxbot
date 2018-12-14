@@ -2,11 +2,30 @@
 *.psd
 *.png
 *.jpg
+*.jpeg
 *.gif
+*.agz
+*.rar
+*.zip
+*.exe
+*.html
+*.conf
+*.mp3
+/core/modules/sound
+*profile*
+*overtimes*
+combo.json
+*drops*
+/core/archetypes/*
+/core/imgreaction*.*
+eventwhitelist.json
+eventblacklist.json
+*trade*
+index.*
+*.css
 *.ico
 /config.json
 /old_version/
-/core/modules/cosmetics/
 /core/archetypes/Cafe.js
 /core/archetypes/drops - Copy.js
 /core/archetypes/Russia.js
@@ -23,10 +42,6 @@
 /core/modules/social/profile.js
 /core/modules/social/rep.js
 /core/modules/owner/
-/core/modules/games/betflip.js
-/core/modules/games/rotation.js
-/core/modules/utility/
-/core/modules/games/
 /core/modules/moderation/unstructured/
 /Pollux-b0f6c7eb29f4.json
 /core/modules/forFun/faustão.js
@@ -34,3 +49,7 @@
 /core/modules/misc/morse.js
 /core/modules/eastereggs/
 /REWORK PENDING/
+/dash/
+/core/modules/dev/
+/core/modules/!event/
+/resources/

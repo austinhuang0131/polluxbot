@@ -3,7 +3,7 @@ const requests = new Map();//games
 var locale = require('../../utils/multilang_b');
 var mm = locale.getT();
 
-
+ 
 
 
 class Cafe {

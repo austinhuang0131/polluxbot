@@ -46,7 +46,7 @@ var init = async function (message, userDB, DB) {
        // return
     }
 
-return message.reply("Temporarily Disabled for a Complete Rework!\n Meanwhile, get your Bgs and Medals at the Dashboard:\n**BGs**: <http://www.pollux.fun/bgshop>\n**Medals**: <http://www.pollux.fun/medalshop> ")
+return message.reply("Get your Backgrounds and Medals at the Online Dashboard:\n**BGs**: <https://www.pollux.fun/bgshop>\n**Medals**: <https://www.pollux.fun/medalshop> ")
     //HELP TRIGGER
     let helpkey = mm("helpkey",{lngs:message.lang})
 if (MSG.split(/ +/)[1]==helpkey || MSG.split(/ +/)[1]=="?"|| MSG.split(/ +/)[1]=="help"){
@@ -140,7 +140,7 @@ const check = bot.emojis.get("314349398811475968") || "✅";
 const xmark = bot.emojis.get("314349398824058880") || "❌";
 
 //Choose Shop
-let emb = new gear.Discord.RichEmbed
+let emb = new gear.RichEmbed
 emb.setColor("#5743c6")
 emb.setTitle(v.whatShop)
 emb.addField(v.bgShop, bkgEmoj, true)
@@ -234,7 +234,7 @@ function buildPage(page) {
     let currentPage = page || 0;
     let menuArr = menu[currentPage]; // MENU IS GLOBAL
     let pageObj = createpage(menu[currentPage]); // reaction pagination
-    let emb = new gear.Discord.RichEmbed
+    let emb = new gear.RichEmbed
     emb.setColor("#e12f55")
     emb.setTitle(medalEmoj + " "+v.medalShop.toUpperCase())
     for (i = 0; i < menuArr.length; i++) {
@@ -296,10 +296,10 @@ function processCheckout(item, index, m) {
 
     let funds = gear.checkGoods(price, Author)
     if (!funds) {
-        Channel.send(v.noFundsResponse).then(m => m.delete(2500).catch(e=> {let a = (new Error); gear.errLog(e,__filename,a.stack.toString())}))
+        Channel.send(v.noFundsResponse).then(m => m.delete({timeout:2500}).catch(e=> {let a = (new Error); gear.errLog(e,__filename,a.stack.toString())}))
         return refresh(index, m, v.noFundsFormal)
     };
-    let processing = new gear.Discord.RichEmbed;
+    let processing = new gear.RichEmbed;
     processing.setColor("#2bb955")
      m.clearReactions().catch(e=>{         message.reply("I need MANAGE MESSAGES and ADD REACTIONS Permissions to do this correctly, please contact the server administrator");            });
     processing.setTitle(v.processing)
@@ -341,7 +341,7 @@ ${v.youSure}`)
 
                     if(ownd){
 
-                        Channel.send(v.alreadyPosess).then(m => m.delete(2500).catch(e=> {let a = (new Error); gear.errLog(e,__filename,a.stack.toString())}))
+                        Channel.send(v.alreadyPosess).then(m => m.delete({timeout:2500}).catch(e=> {let a = (new Error); gear.errLog(e,__filename,a.stack.toString())}))
                         return refresh(index, m, v.alreadyPosess)
 
                     }

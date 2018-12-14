@@ -1,0 +1,156 @@
+var gear = require("../../gearbox.js");
+var cmd = 'roll';
+var locale = require('../../../utils/multilang_b');
+var mm = locale.getT();
+
+var init = function (message,userDB,DB) {
+
+const v={}
+
+
+//roll (1)dX (maths)
+
+
+let DICE_REGEX = /([0-9]*d[0-9]+)/g
+let DICE_EMOTES={
+  "2": "<:exchange:446901834246782976>",
+  "4": gear.emoji("d4"),
+  "6": gear.emoji("d6"),
+  "8": gear.emoji("d8"),
+  "10": gear.emoji("d10"),
+  "12": gear.emoji("d12"),
+  "20": gear.emoji("d20"),
+  "any": gear.emoji("d20")
+}
+const MTH = /[\+\-\*\/\(\)]/g
+let rollEq = message.content.split(/\s+/).slice(1).join(" ");
+let   NOSTREAK = false
+if(rollEq.includes("-nostreak")){
+  rollEq=rollEq.replace(/-nostreak/g,"");
+  NOSTREAK = true 
+}
+  
+let dicesRolled = rollEq.match(DICE_REGEX)  
+const SINGLEROLL = (dicesRolled.length==1&&!rollEq.match(MTH));
+const SIMPLEROLL = (dicesRolled.length==1&&rollEq.match(MTH)!=null)
+      
+      
+if (dicesRolled.length>5) return message.reply("You can only roll 5 different dices at a once!");
+const  MAX_DISP = Math.floor(dicesRolled.length  / 25)||25;
+  
+let diceArray = []
+
+ const P = {user:message.member.displayName,lang:message.lngs}
+   const streakLimit = "Dice streak can be shown for up to 25 rolls.",
+    s_total =  mm('terms.total',P),
+    s_overview = mm('terms.overview',P),
+    s_result =  mm('terms.res',P),
+    theyRollsomedice = mm("games.dice.userRolledSome",P)
+
+let notThisPls = mm("games.dice.exceedLim",P);
+
+  for (i in dicesRolled){
+    let diceAmount = Number(dicesRolled[i].split("d")[0]||1);
+    let diceFaces  = Number(dicesRolled[i].split("d")[1]||1);
+    
+    P.numDice = dicesRolled[i];    
+    let theyRolled =  mm("games.dice.userRolled",P),
+        neutralRolled =  mm("games.dice.neutralRolled",P) 
+    
+    let dicetex = `${DICE_EMOTES[diceFaces]||DICE_EMOTES.any}  ${(SINGLEROLL||SIMPLEROLL)?theyRolled:neutralRolled}`
+    let diceStreak = []
+    let rollTotal = 0
+    
+    for (j=0;j<diceAmount;j++){
+      let rand = gear.randomize(1,diceFaces);
+      rollTotal+= rand
+      if(!NOSTREAK){
+        
+      if(diceAmount<=MAX_DISP&&diceAmount>1){
+        diceStreak.push(rand)
+      }else if(diceAmount>MAX_DISP){
+        diceStreak = streakLimit
+      }
+      }
+
+    }
+    
+      P.val = rollTotal;
+      let andGot =  mm("games.dice.andGot",P) ;
+ 
+    
+    
+      
+     let commentary= rollTotal==diceFaces*diceAmount?"⭐":(rollTotal==1||rollTotal==diceAmount)?"💀":"";
+     let dicepost = andGot + commentary
+     
+     diceArray.push({dicetex,dicepost,diceStreak,rollTotal});
+    
+  }
+  
+  let rollEq2 = rollEq.toLowerCase();
+  let loop = 0
+
+  while(rollEq2.match(/[0-9]*d[0-9]+/g)){
+    rollEq2 = rollEq2.replace(/[0-9]*d[0-9]+/,diceArray[loop].rollTotal)
+    loop++
+  }
+  rollEq2=rollEq2.replace(/\s/g,"")
+  rollEq2=rollEq2.replace(/(?=[^\+\-\*\/\(\)])(?=[^0-9])[^DICE]/g,"")
+  rollEq2
+  
+
+  var RESULT = eval(rollEq2);
+  
+  let totalTex = "**"+s_total+": "+RESULT+"**";
+  
+  
+  let final_pre = (SIMPLEROLL||SINGLEROLL?"":theyRollsomedice+"\n")+diceArray.map(x=>x.dicetex).join("\n").replace(/ +/g," ")
+  
+  let final = (SIMPLEROLL||SINGLEROLL?"":theyRollsomedice+"\n")+diceArray.map(x=>x.dicetex + x.dicepost + (x.diceStreak.length>0?"`"+x.diceStreak+"`":"")).join(" \n").replace(/ +/g," ")
+  
+  
+  
+let overviewPre =  `
+
+${ SINGLEROLL ?"":  `${s_overview}: \`${"---"}\``}
+${ SINGLEROLL ?"":  `**${s_result}:** ${"---"}` }
+
+`
+let overview = `
+
+${ SINGLEROLL ?"":  `${s_overview}: \`${rollEq2}\``}
+${ SINGLEROLL ?"":  `**${s_result}:** ${RESULT}` }
+
+`
+
+if((final+overview+5).length>2000){
+  return message.reply(notThisPls);
+}
+  
+ //message.reply("```js\n"+JSON.stringify({diceArray,rollEquation_RAW:rollEq,rollEquation:rollEq2,RESULT,SIMPLEROLL,SINGLEROLL,final_pre
+//,final},null,3)+"```")
+  message.channel.send(final_pre+overviewPre)
+    .then(async mes=>{
+          await gear.wait(2);
+          mes.edit(""+final+overviewPre)
+            .then(async me2=>{
+                   await gear.wait(1);
+                   me2.edit(final+ overview)
+          })
+  }).catch(e=>message.reply(notThisPls))
+
+  
+  
+
+  
+  
+  }
+ module.exports = {
+    pub:false,
+    cmd: cmd,
+    perms: 3,
+    init: init,
+    cat: 'misc'
+};
+  

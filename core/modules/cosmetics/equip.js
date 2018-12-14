@@ -9,7 +9,7 @@ var mm = locale.getT();
 var cmd = 'shop';
 
 var init = async function (message, userDB, DB) {
-
+//return message.reply("You're probably wanting this `p!costume equip` instead! ");
     const start = Date.now();
     const Server = message.guild;
     const Channel = message.channel;
@@ -28,7 +28,7 @@ var init = async function (message, userDB, DB) {
     const LANG = message.lang;
 
 
-return message.reply("Under Re-Work; Equip Medals at <http://www.pollux.fun/dashboard#/profile> ~")
+return message.reply("Equip Medals at <http://www.pollux.fun/dashboard#/medals> ~")
     //-------MAGIC----------------
 
 
@@ -221,11 +221,11 @@ return message.reply("Under Re-Work; Equip Medals at <http://www.pollux.fun/dash
 
     function buildPage(page) {
 
-        console.log("FUNCTION: buildPage \n CURRPAGE: " + page)
+        //console.log("FUNCTION: buildPage \n CURRPAGE: " + page)
         let currentPage = page || 0;
         let menuArr = menu[currentPage]; // MENU IS GLOBAL
         let pageObj = createpage(menu[currentPage]); // reaction pagination
-        let emb = new gear.Discord.RichEmbed
+        let emb = new gear.RichEmbed
         emb.setColor("#e18f2f")
 
         emb.setTitle(":diamond_shape_with_a_dot_inside:" + v.equipMenu)
@@ -309,7 +309,7 @@ return message.reply("Under Re-Work; Equip Medals at <http://www.pollux.fun/dash
                     }
                     if (ownd) {
                         return Channel.send(warn + v.equipTwice).then(warn => {
-                            warn.delete(5000)
+                            warn.delete({timeout:5000})
                             deleteIfPossible(embedMenu)
                             return callB(index)
                         })
@@ -378,7 +378,7 @@ return message.reply("Under Re-Work; Equip Medals at <http://www.pollux.fun/dash
                     }
                     if (ownd) {
                         return Channel.send(warn + v.equipTwice).then(warn => {
-                            warn.delete(5000)
+                            warn.delete({timeout:5000})
                             deleteIfPossible(embedMenu)
                             return callB(index)
                         })
@@ -439,7 +439,7 @@ return message.reply("Under Re-Work; Equip Medals at <http://www.pollux.fun/dash
         let medal_file = item
         let name = item[1]
 
-        let processing = new gear.Discord.RichEmbed;
+        let processing = new gear.RichEmbed;
         processing.setColor("#2bb955")
 
         if (canManage) {
@@ -455,7 +455,7 @@ return message.reply("Under Re-Work; Equip Medals at <http://www.pollux.fun/dash
 
         await processing.setDescription(equipArray);
         processing.setFooter(v.footext)
-        console.log(restrained)
+        //console.log(restrained)
 
         deleteIfPossible(embedMenu)
         Channel.send({
@@ -476,7 +476,7 @@ return message.reply("Under Re-Work; Equip Medals at <http://www.pollux.fun/dash
         let medal_file = item
         let name = item[1]
 
-        let processing = new gear.Discord.RichEmbed;
+        let processing = new gear.RichEmbed;
         processing.setColor("#2bb955")
 
         if (canManage) {
@@ -491,7 +491,7 @@ return message.reply("Under Re-Work; Equip Medals at <http://www.pollux.fun/dash
 
         await processing.setDescription(equipArray);
         processing.setFooter(v.footext)
-        console.log(restrained)
+        //console.log(restrained)
 
         embedMenu.delete()
         Channel.send({
@@ -538,13 +538,13 @@ return message.reply("Under Re-Work; Equip Medals at <http://www.pollux.fun/dash
                     let pseudoequip = message.author.dDATA.modules.medals;
                     let empty = false;
                     if ((pseudoequip[responseINT - 1][0] === undefined || pseudoequip[responseINT - 1][0] === 0) && medal_file[0] === 0) {
-                        console.log("aeho")
+                        //console.log("aeho")
                         empty = true;
                     }
 
                     if (empty) {
                         return Channel.send(warn + v.isEmpty).then(warn => {
-                            warn.delete(5000)
+                            warn.delete({timeout:5000})
                             let m3 = embedSlots;
                             deleteIfPossible(embedSlots);
                             resolve(true)
@@ -613,7 +613,7 @@ return message.reply("Under Re-Work; Equip Medals at <http://www.pollux.fun/dash
 
                     if (empty) {
                         return Channel.send(warn + v.isEmpty).then(warn => {
-                            warn.delete(5000)
+                            warn.delete({timeout:5000})
                             let m3 = embedSlots;
                             deleteIfPossible(embedSlots);
                             resolve(true)
@@ -689,7 +689,7 @@ return message.reply("Under Re-Work; Equip Medals at <http://www.pollux.fun/dash
                 if (reata === "c") {
 
                     return Channel.send(xmark + v.cancelled).then(warn => {
-                        warn.delete(5000)
+                        warn.delete({timeout:5000})
                         let m3 = yesOrNo;
                         deleteIfPossible(yesOrNo);
                         resolve(false)
@@ -699,7 +699,7 @@ return message.reply("Under Re-Work; Equip Medals at <http://www.pollux.fun/dash
                 if (reata === exitWord) {
 
                     Channel.send(xmark + v.cancelled).then(warn => {
-                        warn.delete(5000)
+                        warn.delete({timeout:5000})
                         deleteIfPossible(yesOrNo);
                         return Author.equipping = false
 
@@ -739,14 +739,14 @@ return message.reply("Under Re-Work; Equip Medals at <http://www.pollux.fun/dash
                 if (rea.emoji == "↩" && rea.count > 0) {
 
                     return Channel.send(xmark + v.cancelled).then(warn => {
-                        warn.delete(5000)
+                        warn.delete({timeout:5000})
                         return processCheckout(medal_file, 0, yesOrNo, !canManage)
                     })
                 }
                 if (rea.emoji == xmark && rea.count > 0) {
 
                     return Channel.send(xmark + v.cancelled).then(warn => {
-                        warn.delete(5000)
+                        warn.delete({timeout:5000})
                         deleteIfPossible(yesOrNo)
                         return resolve(false)
                     })
@@ -770,7 +770,7 @@ return message.reply("Under Re-Work; Equip Medals at <http://www.pollux.fun/dash
 
     async function loadMedalShop(m, menuPage, index) {
 
-        console.log("FUNCTION: loadMedalShop")
+        //console.log("FUNCTION: loadMedalShop")
 
 
         if (canManage) {
@@ -820,7 +820,7 @@ return message.reply("Under Re-Work; Equip Medals at <http://www.pollux.fun/dash
 } // MODULE END
 
 module.exports = {
-    pub: true,
+    pub: false,
     cmd: cmd,
     perms: 3,
     init: init,

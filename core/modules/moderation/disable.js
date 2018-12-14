@@ -42,7 +42,7 @@ const init = async function (message) {
     message.reply(mm('CMD.chooseAmod', P));
     return;
   }
-  if (!gear.hasPerms(Member)) {
+  if (!gear.hasPerms(Member,Server.dDATA)) {
     return message.reply(mm('CMD.moderationNeeded', P)).catch(console.error);
   }
 
@@ -114,7 +114,7 @@ const init = async function (message) {
           });
         }
       } catch (e) {
-        console.log(e)
+        console.error(e)
       }
     })
     mod ? message.reply(disaMS) : message.reply(disaCS);

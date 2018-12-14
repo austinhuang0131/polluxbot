@@ -11,6 +11,9 @@ const coinbase = JSON.parse(fs.readFileSync("./resources/lists/discoin.json", "u
 
 const init = async function (message, userDB, DB) {
 
+
+
+
   const discoin = new Discoin(cfg.discoin);
 
   let args = message.content.split(/ +/).slice(1)
@@ -67,8 +70,9 @@ const init = async function (message, userDB, DB) {
     if (r.status == "approved") {
 
       await eko.pay(Number(amt), message.author.id, {type: 'exchange'});
+      await gear.audit(message.author.id,amt,"discoin_exchange","RBN");
 
-      let embed = new gear.Discord.RichEmbed
+      let embed = new gear.RichEmbed
       embed.setColor("#f43fa0")
       //embed.setThumbnail("https://image.freepik.com/free-vector/street-atm-teller-machine-with-current-operation_3446-141.jpg")
       embed.setDescription(v.desc.replace("%BOT%", coinInfo.bot))
@@ -78,7 +82,7 @@ const init = async function (message, userDB, DB) {
       embed.addField(outtake, `${coinInfo.icon} **${r.resultAmount}**`, true)
       embed.addField(v.remainder, `${r.limitNow} ${$}`, false)
       embed.addField(v.receiptCode, "```" + `${r.receipt}` + "```\n" + v.takedis, false)
-      embed.setFooter(message.author.tag, message.author.avatarURL || message.author.defaultAvatarURL)
+      embed.setFooter(message.author.tag, message.author.displayAvatarURL({format:'png'}))
       let ts = new Date
       embed.setTimestamp(ts)
       message.channel.send("processing...")
@@ -123,6 +127,7 @@ const init = async function (message, userDB, DB) {
 
 module.exports = {
   pub: true,
+   botperms: ["EMBED_LINKS"],
   cmd: "exchange",
   perms: 3,
   init: init,

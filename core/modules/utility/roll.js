@@ -8,9 +8,9 @@ var init = function (message,userDB,DB) {
 const v={}
 
  let regex = /(([0-9]+|)d([0-9]+))((\s+|)(\+|-|\*|\/)(\s+|)([0-9]+)|)/g
-
- if(message.content.length > 12)return message.reply("Sorry, I bought all the dices I could find in local markets but there wasn't enough to do this roll");
-
+    
+ if(message.content.length > 32)return message.reply("Sorry, I bought all the dices I could find in local markets but there wasn't enough to do this roll");
+ 
    let match = regex.exec(message.content)
    const args = message.content.split(/\s+/).slice(1).join(" ").replace(regex,"$1$6$8")
 
@@ -26,7 +26,7 @@ const v={}
         console.log(thrill)
     }
 
-
+ 
 
     const Channel=message.channel;
 
@@ -36,7 +36,7 @@ const v={}
 
     let rolls = []
     let sum = 0
-
+    console.log(match)
     let die = gear.emoji("d"+match[3])
 
 
@@ -58,7 +58,7 @@ const v={}
 
     // (gear.randomize(1,parseInt(match[3])))
     let a
-    args.split(" ")[1] == "down" ? a = 0 : a = 1;
+    args.split(" ")[1] == "down" ? a = 0 : a = 0;
     var moresum = Math.floor(eval(sum + match[6] + parseInt(match[8]))) + a
     if (match[6]) {
 

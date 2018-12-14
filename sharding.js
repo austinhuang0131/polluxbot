@@ -1,26 +1,65 @@
-const Discord = require('discord.js');
+const Discord = require('discord.js');  
 const gear = require('./core/gearbox.js');
 const cfg = require('./config.json');
 const rq = require("request");
+const messenger = require('messenger');
+
+//let server = messenger.createListener(3055);
+
 
 let guilds = 0;
-let users = 0;
-let SHARDS= 1
+let users = 0; 
+let SHARDS= 13;
 
 let ShardManager = new Discord.ShardingManager('./pollux.js',{token:cfg.token}, true);
+/*
+
+
+  server.on('broadcast',(msg,data)=>{
+    ShardManager.broadcastEval('try{'+data+'}catch(err){}').then(res=>{
+      msg.reply(res);
+    });
+  });
+  server.on('broadcast sum',(msg,data)=>{
+    ShardManager.broadcastEval('try{'+data+'}catch(err){}').then(res=>{
+      msg.reply(res.reduce((a,b)=>a+b));
+    });
+  });
+  server.on('broadcast flat',(msg,data)=>{
+    ShardManager.broadcastEval('try{'+data+'}catch(err){}').then(res=>{
+      msg.reply(clean(flatten(res)),null);
+    });
+  })
+*/
 
 ShardManager.spawn(SHARDS).then(shards => {
   TFS();
+  require('./core/cronjobs_global.js').run();
 }).catch(e=> {
-  let a = (new Error);
+  console.error(e);
 });
+function clean(thiss,deleteValue) {
+  for (var i = 0; i < thiss.length; i++) {
 
+    if (thiss[i] == deleteValue) {
+      thiss.splice(i, 1);
+      i--;
+    }
+  }
+  return thiss;
+};
+
+function flatten(arr) {
+  return arr.reduce(function (flat, toFlatten) {
+    return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
+  }, []);
+}
 function TFS() {
     setTimeout(() => {
         getServs();
         setInterval(() => {
             getServs();
-        }, 1000 * 60 * 5);
+        }, 1000 * 60 * 50);
     }, 1000 * 10);
 }
 
@@ -39,9 +78,9 @@ function updateStats(guilds) {
 
     let rqOptions = {
         headers: {
-            Authorization: cfg.pwTok3
+            Authorization: cfg.discordbots
         },
-        url: `https://bots.discord.pw/api/bots/${cfg.pwID}/stats`,
+        url: `https://bots.discord.pw/api/bots/271394014358405121/stats`,
         method: 'POST',
         json: {
             "server_count": guilds
@@ -50,10 +89,10 @@ function updateStats(guilds) {
 
     rq(rqOptions, function (err, response, body) {
         if (err) {
-            console.log(err)
+            console.log("DBOTS PW ERROR",err)
         }
 
-            console.log(body)
+            console.log("PW OK",body)
     });
 
     let rqCarbon = {
@@ -61,15 +100,15 @@ function updateStats(guilds) {
         method: 'POST',
         json: {
             "server_count": guilds,
-            "key": cfg.carbon_token
+            "key": cfg.carbonitex
         }
     };
 
     rq(rqCarbon, function (err, response, body) {
         if (err) {
-            console.log(err)
+            console.log("CARBON ERROR",err)
         }
-
+console.log("Carbon OK",body)
     });
 
 }

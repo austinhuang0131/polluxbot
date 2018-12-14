@@ -46,7 +46,7 @@ for (k in REACT){
 
 
     for (var i=0;i<REACT[k].length;i++){
-          console.log("page"+page+"lines"+lines)
+         // console.log("page"+page+"lines"+lines)
         list[page] += "\n"+k+" : "+REACT[k][i]
         line++
         page = Math.floor(lines/5)

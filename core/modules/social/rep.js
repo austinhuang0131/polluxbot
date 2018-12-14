@@ -34,10 +34,10 @@
    const Server = message.guild;
    const Channel = message.channel;
    const Author = message.author;
-   const Target = message.mentions.users.first()||Author;
    const MSG = message.content;
    const bot = message.botUser
-   const args = MSG.split(' ').slice(1)[1]
+   const args = MSG.split(/ +/).slice(1)[0]
+   const Target = args && (args!="void"||args!="vácuo") ? bot.users.get(message.args[0].replace(/[^0-9]/g,'')):false;
    const LANG = message.lang;
    let P = {
      lngs: message.lang
@@ -48,13 +48,12 @@
        opt: this.cat
      })) return;
 
-   Target.dDATA = message.target.dDATA || await userDB.findOne({id:Target.id});
-
+     
      let day = 15000000
      let dly = Author.dDATA.modules.repdaily
-     console.log(dly)
+     //console.log(dly)
      let now = new Date().getTime();
-
+   
    try {
      let creation = Author.createdAt.getTime()
      let nowe = Date.now()
@@ -68,8 +67,10 @@
        lngs: LANG
      })
 
-     if (message.mentions.users.size === 0) {
-       if (message.content.toLowerCase().includes(mm('dict.vacuum', P)) || message.content.toLowerCase().includes('vacuum')) {
+     if (!Target ) {
+          if ((now - dly) >= day) {
+              
+       if (message.content.toLowerCase().includes(mm('dict.vacuum', P)) || message.content.toLowerCase().includes('void')||message.content.toLowerCase().includes('vácuo')) {
          if ((now - dly) >= day) {
            console.log(GLB)
            let vacuum = GLB.vacuumrep || 0;
@@ -84,8 +85,14 @@
          }
        }
        return message.reply(noTarget)
+                }
+         else{
+             
+            return repCool();
+         }
      }
-     if (message.mentions.users.first().id == Author.id) {
+     let TargetDATA =  await userDB.findOne({id:Target.id});
+     if (Target.id == Author.id) {
        return message.reply(noSelf)
      }
      //------
@@ -94,7 +101,7 @@
      if (Author.dDATA.modules.repdaily == undefined) {
        await userDB.set(Author.id, {$set: {'modules.repdaily': 0}});
      }
-     if (Target.dDATA.modules.rep == undefined) {
+     if (TargetDATA.modules.rep == undefined) {
        await userDB.set(Author.id, {$set: {'modules.rep': 0}});
      }
      //-----------
@@ -105,24 +112,24 @@
          who: Author.username,
          target: Target.username
        })
-
+       
        await userDB.set(Author.id, {$set: {'modules.repdaily': now}});
        userDB.set(Target.id, {$inc: {'modules.rep': 1}}).then(ok=>{
          if(ok){
           Channel.send(repConfirm)
-         }
+         } 
        });
 
      } else {
        return repCool();
      }
    } catch (e) {
-     console.log(e)
+     console.error(e)
    }
-
+   
    function repCool(){
             let r = day - (now - dly)
-       let remain = (r / 1000 + "").toHHMMSS();
+       let remain = (r /1000 + "").toHHMMSS();
        let repCooldown = mm('reput.cooldown', {
          lngs: LANG,
          remaining: remain
@@ -130,7 +137,7 @@
        Channel.send(repCooldown)
    }
  }
-
+ 
  module.exports = {
    pub: true,
    cmd: cmd,

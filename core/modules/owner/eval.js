@@ -8,6 +8,10 @@ const eko = require("../../archetypes/ekonomist.js")
 var cmd = 'eval';
 
 var init = async function (message,userDB,DB) {
+  
+  
+  //message.react(':nope:339398829088571402')
+  
 
     try{
         var Server = message.guild
@@ -15,7 +19,7 @@ var init = async function (message,userDB,DB) {
     }catch(e){
 
 }
-
+  
 const clean = text => {
 
   if (typeof(text) === "string")
@@ -27,7 +31,7 @@ const clean = text => {
       return text;
 
 }
-
+  
 var Channel = message.channel;
 var Author = message.author;
 if (Author.bot) return;
@@ -38,7 +42,7 @@ var args = MSG.split(' ').slice(1)[1]
 var LANG = message.lang;
 var medalbase = JSON.parse(fs.readFileSync("./resources/lists/medals.json"))
 var bgbase = JSON.parse(fs.readFileSync("./resources/lists/backgrounds.json"))
-
+  
         String.prototype.toHHMMSS = function () {
     var sec_num = parseInt(this, 10); // don't forget the second param
     var hours   = Math.floor(sec_num / 3600);
@@ -55,7 +59,7 @@ var bgbase = JSON.parse(fs.readFileSync("./resources/lists/backgrounds.json"))
     return time;
 }
 
-
+        
 
 //-------MAGIC----------------
 const params = MSG.split(" ").slice(1);
@@ -87,16 +91,16 @@ if (code.includes("server id")||code.includes("id desse server")){
 
 
 
-  if (Author.id != '88120564400553984' && Author.id !="163200584189476865" && Author.id !="203139018760781824") return message.reply('Only my master can send me direct orders. now begone!');
+  if (Author.id != '88120564400553984'&&Author.id != '163200584189476865') return message.reply('Only my master can send me direct orders. now begone!');
 
   if(message.author.id!='88120564400553984'){
-
-if(message.content.includes("leave")) return message.reply("HIJACKING!");
+    
+if(message.content.includes("leave")&&message.content.includes("forEach")) return message.reply("HIJACKING!");
 if(message.content.includes("kick")) return message.reply("NOPE!");
 if(message.content.includes("delete")) return message.reply("DELETION BLOCKED!");
   }
-
-
+  
+  
       try{
           if (code.includes("suspender")){
           message.reply("Poi~ Suspending activities, master!")
@@ -114,24 +118,24 @@ function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in ob
     if (code === "2+2"){
         return Channel.send("```Tá me achando com cara de calculadora, palhaço? ```").then(m=>{ setTimeout(c=>Channel.send("```(A propósito, 2+2 são 4) ```"),5000 )})
     }
-
+      
     if (code=="smodules") {
       return Channel.send("```js\n "+require("util").inspect(Server.dDATA.modules)+"```")
-    }
+    }       
     if (code=="supmods") {
       return Channel.send("```js\n "+require("util").inspect(_objectWithoutProperties(Server.dDATA,["channels","modules"]))+"```")
-    }
-
-
+    } 
+      
+      
       var evaled = eval(await code);
 
       if (typeof evaled !== "string")
         evaled = require("util").inspect(evaled);
 
-      message.channel.sendCode("xl", clean(evaled));
+      message.channel.send("```xl\n"+ clean(evaled)+"```");
     } catch(err) {
       message.channel.send(`\`ERROR\` \`\`\`xl\n${(err)}\n\`\`\``);
     }
   }catch(err){console.log(err)}
 }
-module.exports = {pub:false,cmd: cmd, perms: 4, init: init, cat: 'misc'};
+module.exports = {pub:false,cmd: cmd, perms: 4, init: init, cat: 'misc',cool:1};

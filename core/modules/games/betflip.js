@@ -15,10 +15,10 @@ const init = async function (message) {
     const MSG = message.content;
     const bot = message.botUser
     const BOT = message.botUser.user
-
+    
     let P={lngs:message.lang}
     if(gear.autoHelper([mm("helpkey",P)],{cmd,message,opt:this.cat}))return;
-
+  
     let rubinemoji = bot.emojis.get('343314186765336576')
 
     let bet = MSG.toLowerCase().split(/ +/);
@@ -45,8 +45,8 @@ const init = async function (message) {
         }),
     };
 
-let coinHeads = mm('dict.coinHeads',{lngs: message.lang});
-let coinTails = mm('dict.coinTails',{lngs: message.lang});
+let coinHeads = mm('dict.coinHeads',{lngs: message.lang}).toLowerCase();
+let coinTails = mm('dict.coinTails',{lngs: message.lang}).toLowerCase();
 mony = Author.dDATA.modules.rubines / 2 +1000;
 
     if (await eko.checkFunds(3, Author) == false) {
@@ -77,7 +77,8 @@ mony = Author.dDATA.modules.rubines / 2 +1000;
     }
             let valid=parseInt(bet[1]);
             await eko.pay(valid,message.author.id, {type: 'gambling'});
-
+            await gear.audit(message.author.id,valid,"gambling_betflip","RBN");
+  
     let coin = gear.randomize(0, 500)+gear.randomize(1, 500);
         coin = gear.randomize(0, 500)+gear.randomize(1, 500);
         coin = gear.randomize(0, 500)+gear.randomize(1, 500);
@@ -86,23 +87,23 @@ mony = Author.dDATA.modules.rubines / 2 +1000;
     let actual =  bet[2] == coinHeads ? "heads" : "tails"
     let actual_res = bet[2] == coinHeads ? coinHeads : coinTails
     let opposite_img = bet[2] == coinHeads ? "tails" : "heads"
-    let opposite_res = bet[2] == coinHeads ? coinTails : coinHeads
+    let opposite_res = bet[2] == coinHeads ? coinTails : coinHeads    
 
     if(coin == 400){
     res =  'side'
-    ros = 'side.png'
+    ros = 'side.png'  
     }
     else if(coin<400){
     res = actual_res
-    ros = actual+'.png'
+    ros = actual+'.png'  
     }else{
-    res = opposite_res
-    ros = opposite_img+'.png'
-    }
+    res = opposite_res 
+    ros = opposite_img+'.png'  
+    }    
     if (bet > 2000){
-          res = opposite_res
-          ros = opposite_img+'.png'
-    }
+          res = opposite_res 
+          ros = opposite_img+'.png'  
+    }    
     if (res.toLowerCase() == bet[2]) {
         let vicPrompt = mm('$.coinVictory', {
             lngs: message.lang,
@@ -111,14 +112,16 @@ mony = Author.dDATA.modules.rubines / 2 +1000;
             emoji: ""
         })+rubinemoji
         message.channel.send(vicPrompt,{files:[paths.BUILD + ros]})
-
+        
             let valid_ceil =Math.ceil(parseInt(bet[1])*1.5);
             await eko.receive(valid_ceil,message.author.id, {type: 'gambling'});
-
+      await gear.audit(message.author.id,valid_ceil,"gambling_betflip","RBN","+");
+      
     }else if (res=='side'){
         message.channel.send("The coin landed on its side??? Wat? Get away from me! And take "+Math.ceil(parseInt(bet[1] * 3))+"rubines!",{files:[paths.BUILD + ros]})
             let valid_ceil =Math.ceil(parseInt(bet[1])*3);
-            await eko.receive(valid_ceil,message.author.id, {type: 'gambling'});
+            await eko.receive(valid_ceil,message.author.id, {type: 'gambling'});   
+      await gear.audit(message.author.id,valid_ceil,"gambling_betflip","RBN","+");
               }else {
         let dftPrompt = mm('$.coinDefeat', {
             lngs: message.lang,

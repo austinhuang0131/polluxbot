@@ -6,7 +6,7 @@ var gear = require("../../gearbox.js");
 var cmd = 'translate';
 
 var init = function (message,userDB,DB) {
-
+ 
     var args=message.content.substr(cmd.length+message.prefix.length)
 
     var langua = message.guild.dDATA.modules.LANGUAGE
@@ -19,11 +19,11 @@ translate(args, {to:langua }).then(res => {
     var flag
     switch(res.from.language.iso){
         case "ro":
-            flag = ":flag_ro:";
-            break;
+            flag = ":flag_ro:"; 
+            break;  
       case "cs":
             flag = ":flag_cz:";
-            break;
+            break; 
       case "en":
             flag = ":flag_gb:";
             break;

@@ -6,7 +6,7 @@ const cmd = 'read';
 const init = async function (message, userDB, DB) {
 
     let args = message.content.split(/ +/).slice(1)[0]
-
+ 
     i2b(args, async function (err, img) {
         if (err){
             let nwurl = await gear.getImg(message)
@@ -15,15 +15,15 @@ const init = async function (message, userDB, DB) {
         }
         vere(img.base64,message)
     });
-
+  
 }
 
 function vere(base64,message){
 
         const vision = Vision({
-            projectId: 'grape-spaceship-123',
+            projectId: 'pollux-172700',
 
-            keyFilename: './Pollux-b0f6c7eb29f4.json'
+            keyFilename: './Pollux-7f990738909e.json'
         });
         vision.textDetection(
                 {content:base64}
@@ -34,7 +34,7 @@ function vere(base64,message){
                 message.channel.send(detections)
             })
             .catch((err) => {
-                message.channel.send("Error::Too Much Text")
+                message.channel.send("Error::VisionAPI Unreachable")
                 console.error('ERROR:', err);
             });
 

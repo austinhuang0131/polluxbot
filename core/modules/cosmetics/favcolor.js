@@ -11,7 +11,7 @@ var init = function (message, userDB, DB) {
     const MSG = message.content
     const Author = message.author
     var bot = message.botUser
-    var args = message.content.split(' ').slice(1)[0]
+    var args = message.content.split(/ +/).slice(1)[0]
     //  var input = args[0].toUpperCase()
 
     //  console.log(isNaN(parseInt(args.replace(/^#/, ''), 16)))
@@ -30,21 +30,42 @@ var init = function (message, userDB, DB) {
         let helpkey = mm("helpkey", {
             lngs: message.lang
         })
-        if (!regExp.test(args) || !args || args === undefined || MSG.split(/ +/)[1] == helpkey || MSG.split(/ +/)[1] == "?" || MSG.split(/ +/)[1] == "help") {
+        if ( !args || args === undefined || MSG.split(/ +/)[1] == helpkey || MSG.split(/ +/)[1] == "?" || MSG.split(/ +/)[1] == "help") {
             return gear.usage(cmd, message,this.cat);
         }
     } catch (e) {
-        console.log(e)
+        console.error(e)
 
         // gear.hook.send(e.error)
     }
     //------------
-
+  console.log(args)
+if(message.mentions.users.size > 0){
+    let embed = new gear.RichEmbed;
+    let x = message.target.dDATA.modules.favcolor
+    embed.setColor("#" + x.replace(/^#/, ''))
+        embed.setAuthor("Favcolor for "+message.mentions.users.first().tag, "https://png.icons8.com/paint-brush/dusk/64")
+        embed.description = "**"+namely(x)[0].title + "** :: " + x
+  
+  return message.channel.send({embed})
+}
+if(args === "check"){
+    let embed = new gear.RichEmbed;
+    let x = message.author.dDATA.modules.favcolor
+    embed.setColor("#" + x.replace(/^#/, ''))
+        embed.setAuthor("Favcolor for "+message.author.tag, "https://png.icons8.com/paint-brush/dusk/64")
+        embed.description = "**"+namely(x)[0].title + "** :: " + x
+  
+  return message.channel.send({embed})
+}
+  if(!args.startsWith("#")||!regExp.test(args) ){
+    return gear.usage(cmd, message,this.cat);
+  }
     var hex = parseInt((args + "FF").replace(/^#/, ''), 16);
 
-    gear.userDB.set(Author.id, {$set:{"favcolor":args}})
+    gear.userDB.set(Author.id, {$set:{"modules.favcolor":args.toUpperCase()}})
 
-    let emb = new gear.Discord.RichEmbed;
+    let emb = new gear.RichEmbed;
     emb.setColor("#" + args.replace(/^#/, ''))
 
     let lang = message.lang[0]
@@ -52,7 +73,7 @@ var init = function (message, userDB, DB) {
 
     console.log(namely(args)[0].title);
     translate(namely(args)[0].title, {
-        to: lang
+        to: lang.split('-')[0]
     }).then(colset => {
 
 

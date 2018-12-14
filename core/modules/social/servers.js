@@ -17,14 +17,14 @@ const LANG = message.lang;
 
 //-------MAGIC----------------
 
- emb =    new gear.Discord.RichEmbed();
+ emb =    new gear.RichEmbed();
     emb.title = "Server Leaderboards"
     emb.description = "Servers sort by Member Count: No Servers with bot count > 15%"
 
  //emb.setThumbnail("https://raw.githubusercontent.com/LucasFlicky/polluxbot/master/avis/6.png")
      if (args === "sv"|| args =="server"||args=="guild"||args=="s") {
                     emb.title = "Server Leaderboards"
- //emb.setThumbnail(Server.iconURL)
+ //emb.setThumbnail(Server.iconURL({format:'png'}))
      }
      var rankItem = []
         var ranked = []
@@ -53,7 +53,7 @@ if(psent >= 15) return;
             reverse: true
         })
     emb.setColor('#da5bae')
-    emb.setAuthor('Pollux',bot.user.avatarURL,'http://pollux.fun')
+    emb.setAuthor('Pollux',bot.user.displayAvatarURL(),'http://pollux.fun')
 
  emb.setFooter("Mean Server Size: "+(aiter/ iter ).toFixed(2)+" || Nonbots: "+(baiter/ iter ).toFixed(2))
 

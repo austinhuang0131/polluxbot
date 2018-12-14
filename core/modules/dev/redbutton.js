@@ -10,7 +10,7 @@ var init = async function (message, userDB, DB) {
     )return;
 
 
-  let embed = new g.Discord.RichEmbed
+  let embed = new g.Discord.MessageEmbed
   embed.setAuthor(message.author.tag,message.author.avatarURL)
   embed.setThumbnail("https://images-na.ssl-images-amazon.com/images/I/71m2NvJyIVL.png")
   embed.setDescription("▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆\n:warning:    **THE BIG RED BUTTON WAS PRESSED!**\n▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆")

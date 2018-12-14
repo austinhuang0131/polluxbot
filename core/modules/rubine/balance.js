@@ -12,10 +12,10 @@ const userDB = gear.userDB
 const DB = gear.serverDB
     const Server = message.guild;
     const Channel = message.channel;
-    const Target = message.mentions.users.first() || message.mentions.users.first() ||message.author;
+    const Target = (await gear.getTarget(message))||message.author;
     const MSG = message.content;
     const bot = message.botUser
-    const emb = new gear.Discord.RichEmbed();
+    const emb = new gear.RichEmbed();
 
     let P={lngs:message.lang}
     if(gear.autoHelper([mm("helpkey",P)],{cmd,message,opt:this.cat}))return;
@@ -34,9 +34,9 @@ const DB = gear.serverDB
     const nope = mm('CMD.noDM',P);
 
   await eko.normalize(Target.id)
-  if(!Target.dDATA)Target.dDATA = await userDB.findOne({id:Target.id});
+  TARGERDATA= await userDB.findOne({id:Target.id});
   let  balc = Target.dDATA.modules.audits||eko.auditTemplate
-  console.log(balc);
+  //console.log(balc);
 let  $R = Target.dDATA.modules.rubines   || 0
 let  $J = Target.dDATA.modules.jades     || 0
 let  $S = Target.dDATA.modules.sapphires || 0
@@ -48,9 +48,9 @@ emb.setDescription(`
 **${Server.member(Target).displayName}**
 
 ${gear.emoji('rubine') + gear.miliarize($R,true)} Rubines  |  ${gear.emoji('jade') + gear.miliarize($J,true)} Jades  |  ${gear.emoji('sapphire') + gear.miliarize($S,true)} Sapphires
-
-**Audit:**
+ <:eventToken:506921849972850729> ${gear.miliarize((TARGERDATA.eventGoodie||0),true)} Event Tokens
 `)
+//**Audit:**
 
     let unit=['rubines','jades','sapphires']
     let fa=[gear.emoji('rubine')+"**Rubines** |",gear.emoji('jade')+"**Jades** |",gear.emoji('sapphire')+"**Sapphires** |"]
@@ -117,23 +117,23 @@ let SB=  `
 `
 
 
-  emb.addField(fa[0]+gas,A,true)
-  emb.addField(fa[1]+gas,jA,true)
-  emb.addField(fa[2]+gas,SA,true)
-  emb.addField(fa[0]+gan,B,true)
+//  emb.addField(fa[0]+gas,A,true)
+//  emb.addField(fa[1]+gas,jA,true)
+//  emb.addField(fa[2]+gas,SA,true)
+//  emb.addField(fa[0]+gan,B,true)
 
-  emb.addField(fa[1]+gan,jB,true)
+//  emb.addField(fa[1]+gan,jB,true)
 
-  emb.addField(fa[2]+gan,SB,true)
+  //emb.addField(fa[2]+gan,SB,true)
 
   let C = `
 ${fa[0]} ${balc[unit[0]].expenses.shop ||0}\t\t   ${fa[1]} ${balc[unit[1]].expenses.shop ||0}\t\t   ${fa[2]} ${balc[unit[2]].expenses.shop ||0}
 `
-  emb.addField('Market Expenses',C,true)
+ // emb.addField('Market Expenses',C,true)
 
 
 
-    let im = Target.avatarURL||Target.defaultAvatarURL
+    let im = Target.displayAvatarURL({format:'png'})|Target.displayAvatarURL
   // emb.setThumbnail(im)
   message.channel.send({embed:emb})
 
@@ -145,6 +145,7 @@ ${fa[0]} ${balc[unit[0]].expenses.shop ||0}\t\t   ${fa[1]} ${balc[unit[1]].expen
 }
  module.exports = {
     pub:true,
+    botperms: ["EMBED_LINKS"],
     cmd: cmd,
     perms: 3,
     init: init,
