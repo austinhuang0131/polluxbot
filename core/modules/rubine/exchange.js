@@ -55,9 +55,9 @@ const init = async function (message, userDB, DB) {
   v.amNaN = mm("discoin.amNaN", P)
   v.invalidCurr = mm("discoin.invalidCurr", P)
   v.invalidAmt = mm("discoin.invalidAmt", P)
-  v.unverified = mm("discoin.unverified", P)
-  v.userLimit = mm("discoin.userLimit", P)
-  v.globalLimit = mm("discoin.globalLimit", P)
+//  v.unverified = mm("discoin.unverified", P)
+//  v.userLimit = mm("discoin.userLimit", P)
+//  v.globalLimit = mm("discoin.globalLimit", P)
   v.receiptCode = mm("discoin.receiptCode", P)
   v.takedis = mm("discoin.takedis", P)
 
@@ -101,6 +101,7 @@ const init = async function (message, userDB, DB) {
     let reason = r.reason
     let xx = gear.emoji("nope")
 
+    /*
     switch (reason) {
       case "amount NaN":
         message.channel.send(xx + v.amNaN)
@@ -121,6 +122,7 @@ const init = async function (message, userDB, DB) {
         message.channel.send(xx + v.globalLimit.replace("%NUM%", r.limit))
         break;
     }
+    */
   })
 
 }

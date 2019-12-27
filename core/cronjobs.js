@@ -9,21 +9,18 @@ const coinbase = JSON.parse(fs.readFileSync("./resources/lists/discoin.json", "u
 const CronJob = require('cron').CronJob;
 Promise = require('bluebird');
 
-async function resolveExchange(exchange_itm,bot){
-
-
-
-
-    
+async function resolveExchange(exchange_itm,bot){    
               let usr = exchange_itm.user + "";
-              let ts = Date(exchange_itm.timestamp * 1000);
-              let src = exchange_itm.source;
-              let amt = Number(Math.floor(exchange_itm.amount));
-              let inv = exchange_itm.receipt;
+              let ts = Date(exchange_itm.timestamp); // iso
+              let src = exchange_itm.from.id;
+              let amt = Number(Math.floor(exchange_itm.payout));
+              let inv = exchange_itm.id;
               let taxes =  0 //Math.ceil(amt*0.1837)
               let coinfee =  0 //Math.floor(amt*(coinbase[src]||{rbnRate:0.005}).rbnRate)
               let newAmt = Math.floor(amt - taxes - coinfee);
 
+            // WARNING: Reverse is gone
+    
             if (newAmt < 1) {
               discoin.reverse(inv);
               return bot.fetchUser(usr)
@@ -56,7 +53,7 @@ async function resolveExchange(exchange_itm,bot){
                     return spaces+inc
                   }
                 bot.fetchUser(usr).then(u => {
-                  
+                  discoin.process(inv);
                 u.send(`
 \`${src}\` ${coinbase[src].icon}:currency_exchange: ${gear.emoji('rubine')} \`RBN\`
 **Exchange Processed!**
