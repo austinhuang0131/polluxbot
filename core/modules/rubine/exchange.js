@@ -79,9 +79,8 @@ const init = async function (message, userDB, DB) {
       embed.setTitle(`${coinbase.DISCOIN.icon} Exchange Successful!`)
       embed.addField(v.intake, `${gear.emoji("rubine")} **${amt}**`, true)
       let outtake = v.outtake.replace("%CURRNAME%", coinInfo.name).replace("%BOTNAME%", coinInfo.bot).replace("%CODE%", $)
-      embed.addField(outtake, `${coinInfo.icon} **${r.resultAmount}**`, true)
-      embed.addField(v.remainder, `${r.limitNow} ${$}`, false)
-      embed.addField(v.receiptCode, "```" + `${r.receipt}` + "```\n" + v.takedis, false)
+      embed.addField(outtake, `${coinInfo.icon} **${r.payout}**`, true)
+      embed.addField(v.receiptCode, "```" + `${r.id}` + "```\n" + v.takedis, false)
       embed.setFooter(message.author.tag, message.author.displayAvatarURL({format:'png'}))
       let ts = new Date
       embed.setTimestamp(ts)
